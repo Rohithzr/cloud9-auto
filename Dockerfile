@@ -65,9 +65,10 @@ RUN curl https://raw.githubusercontent.com/creationix/nvm/v0.31.6/install.sh | b
 
 ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
 ENV PATH      $NVM_DIR/v$NODE_VERSION/bin:$PATH
-# ------------------------------------------------------------------------------
-# Install Node
-RUN nvm install v4.5.0
+
+# # ------------------------------------------------------------------------------
+# # Install Node
+# RUN nvm install v4.5.0
 
 # ------------------------------------------------------------------------------
 # Install Cloud9

@@ -52,24 +52,10 @@ WORKDIR /etc/supervisor/conf.d
 CMD ["supervisord", "-c", "/etc/supervisor/conf.d"]
 
 # ------------------------------------------------------------------------------
-# Install and Load NVM
-ENV NVM_DIR /usr/local/nvm
-ENV NODE_VERSION 4.5.0
-
-# Install nvm with node and npm
-RUN curl https://raw.githubusercontent.com/creationix/nvm/v0.31.6/install.sh | bash \
-    && source $NVM_DIR/nvm.sh \
-    && nvm install $NODE_VERSION \
-    && nvm alias default $NODE_VERSION \
-    && nvm use default
-
-ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
-ENV PATH      $NVM_DIR/v$NODE_VERSION/bin:$PATH
-
-# # ------------------------------------------------------------------------------
-# # Install Node
-# RUN nvm install v4.5.0
-
+# Install Node.js
+RUN curl -sL https://deb.nodesource.com/setup | bash -
+RUN apt-get install -y nodejs
+    
 # ------------------------------------------------------------------------------
 # Install Cloud9
 RUN mkdir -p /.dloads/c9

@@ -7,10 +7,29 @@
 FROM ubuntu:14.04
 MAINTAINER Rohit Hazra <rohithzr@live.com>
 
+# Replace shell with bash so we can source files
+RUN rm /bin/sh && ln -s /bin/bash /bin/sh
+
+# Set debconf to run non-interactively
+RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
+
 # ------------------------------------------------------------------------------
 # Install base
-RUN apt-get update
-RUN apt-get install -y supervisor build-essential g++ curl libssl-dev apache2-utils git libxml2-dev sshfs
+# Install base dependencies
+RUN apt-get update && apt-get install -y -q --no-install-recommends \
+        apt-transport-https \
+        build-essential \
+        ca-certificates \
+        libssl-dev \
+        supervisor \
+        apache2-utils \
+        git \
+        libxml2-dev \
+        sshfs \
+        g++ \
+        curl \
+    && rm -rf /var/lib/apt/lists/*
+
 VOLUME ["/etc/supervisor/conf.d"]
 
 # ------------------------------------------------------------------------------
@@ -34,13 +53,18 @@ CMD ["supervisord", "-c", "/etc/supervisor/conf.d"]
 
 # ------------------------------------------------------------------------------
 # Install and Load NVM
-RUN export NVM_DIR="$HOME/.nvm"
-RUN git clone https://github.com/creationix/nvm.git "$NVM_DIR"
-RUN cd "$NVM_DIR"
-RUN git checkout `git describe --abbrev=0 --tags --match "v[0-9]*" origin`
-RUN . "$NVM_DIR/nvm.sh"
-RUN export NVM_DIR="$NVM_DIR" [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+ENV NVM_DIR /usr/local/nvm
+ENV NODE_VERSION 4.5.0
 
+# Install nvm with node and npm
+RUN curl https://raw.githubusercontent.com/creationix/nvm/v0.31.6/install.sh | bash \
+    && source $NVM_DIR/nvm.sh \
+    && nvm install $NODE_VERSION \
+    && nvm alias default $NODE_VERSION \
+    && nvm use default
+
+ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
+ENV PATH      $NVM_DIR/v$NODE_VERSION/bin:$PATH
 # ------------------------------------------------------------------------------
 # Install Node
 RUN nvm install v4.5.0

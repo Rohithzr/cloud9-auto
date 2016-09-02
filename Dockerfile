@@ -4,13 +4,13 @@
 # Based on a work at https://github.com/kdelfour/supervisor-docker
 # ------------------------------------------------------------------------------
 # Pull base image.
-FROM tutum/ubuntu:trusty
+FROM ubuntu:14.04
 MAINTAINER Rohit Hazra <rohithzr@live.com>
 
 # ------------------------------------------------------------------------------
 # Install base
 RUN apt-get update
-RUN apt-get install -y build-essential g++ curl libssl-dev apache2-utils git libxml2-dev sshfs supervisor
+RUN apt-get install -y supervisor build-essential g++ curl libssl-dev apache2-utils git libxml2-dev sshfs
 VOLUME ["/etc/supervisor/conf.d"]
 
 # ------------------------------------------------------------------------------
@@ -18,8 +18,8 @@ VOLUME ["/etc/supervisor/conf.d"]
 # - Determine runlevel and services at startup [BOOT-5180]
 RUN update-rc.d supervisor defaults
 
-# - Check the output of apt-cache policy manually to determine why output is empty [KRNL-5788]
-RUN apt-get update | apt-get upgrade -y
+# # - Check the output of apt-cache policy manually to determine why output is empty [KRNL-5788]
+# RUN apt-get update | apt-get upgrade -y
 
 # - Install a PAM module for password strength testing like pam_cracklib or pam_passwdqc [AUTH-9262]
 RUN apt-get install libpam-cracklib -y

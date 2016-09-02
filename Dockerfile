@@ -34,8 +34,12 @@ CMD ["supervisord", "-c", "/etc/supervisor/conf.d"]
 
 # ------------------------------------------------------------------------------
 # Install and Load NVM
-RUN curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.31.6/install.sh | bash
-RUN export NVM_DIR="$HOME/.nvm" [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+RUN export NVM_DIR="$HOME/.nvm"
+RUN git clone https://github.com/creationix/nvm.git "$NVM_DIR"
+RUN cd "$NVM_DIR"
+RUN git checkout `git describe --abbrev=0 --tags --match "v[0-9]*" origin`
+RUN . "$NVM_DIR/nvm.sh"
+RUN export NVM_DIR="$NVM_DIR" [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
 
 # ------------------------------------------------------------------------------
 # Install Node
